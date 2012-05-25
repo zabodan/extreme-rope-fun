@@ -1,12 +1,14 @@
 package rianon.ropes;
 
 import java.util.HashSet;
+
 import codechicken.core.Vector3;
 
-public abstract class IRopeJoint
+public abstract class IRopeJoint extends IFunEntity
 {
     private static final double cGravitation = -9.81;
     private static final double cAirFriction = -0.02;
+    private static final double cMaxVelocity = 8; // m/s
 
     // temporary Vector3 to help computations without allocating memory
     private static Vector3 temp_ = new Vector3();
@@ -27,18 +29,19 @@ public abstract class IRopeJoint
 
     public abstract double getRopeJointMass();
 
-    public void attachRope(IRopePiece rp)
+    public void attachRopePiece(IRopePiece rp)
     {
         if (pieces_.add(rp))
             totalMass_ += rp.getRopePieceMass() / 2.0;
     }
 
-    public void detachRope(IRopePiece rp)
+    public void detachRopePiece(IRopePiece rp)
     {
         if (pieces_.remove(rp))
             totalMass_ -= rp.getRopePieceMass() / 2.0;
     }
 
+    @Override
     public void solveForces()
     {
         // start with gravitation
@@ -58,12 +61,24 @@ public abstract class IRopeJoint
         }
     }
 
+    @Override
     public void solveMotion()
     {
         final double timeSpan = 0.05D; // as long as there are 20 ticks per second
 
         position.add(temp_.set(velocity).multiply(timeSpan));
         velocity.add(temp_.set(totalForce).multiply(timeSpan / totalMass_));
+
+        // limit maximum velocity
+        final double v = velocity.mag();
+        if (v > cMaxVelocity)
+            velocity.multiply(cMaxVelocity / v);
+    }
+
+    @Override
+    public boolean isActiveEntity()
+    {
+        return !velocity.isZero();
     }
 
 }

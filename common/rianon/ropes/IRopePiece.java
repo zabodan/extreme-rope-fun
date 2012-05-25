@@ -1,12 +1,9 @@
 package rianon.ropes;
 
-import net.minecraft.src.Entity;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.World;
 import codechicken.core.Vector3;
 
 // rope piece has fixed length = 1m
-public abstract class IRopePiece
+public abstract class IRopePiece extends IFunEntity
 {
     private static final double cBaseLength = 1D;
 
@@ -18,13 +15,14 @@ public abstract class IRopePiece
 
     public IRopePiece(IRopeJoint begin, IRopeJoint end)
     {
-        assert (begin != null && end != null);
+        super(); // start as active entity
+        assert begin != null && end != null;
 
         begin_ = begin;
         end_ = end;
 
-        begin_.attachRope(this);
-        end_.attachRope(this);
+        begin_.attachRopePiece(this);
+        end_.attachRopePiece(this);
         solveForces();
     }
 
@@ -49,14 +47,14 @@ public abstract class IRopePiece
         if (joint == begin_)
             return end_;
 
-        assert (joint == end_);
+        assert joint == end_;
         return begin_;
     }
 
     public void replace(IRopeJoint joint, IRopeJoint newJoint)
     {
-        assert (joint == begin_ || joint == end_);
-        assert (newJoint != null);
+        assert joint == begin_ || joint == end_;
+        assert newJoint != null;
 
         if (joint == begin_)
             begin_ = newJoint;
@@ -64,6 +62,16 @@ public abstract class IRopePiece
             end_ = newJoint;
     }
 
+    public void applyTensileForceTo(IRopeJoint joint, Vector3 totalForce)
+    {
+        assert joint == begin_ || joint == end_;
+        if (joint == begin_)
+            totalForce.add(tensileForce_);
+        else
+            totalForce.subtract(tensileForce_);
+    }
+
+    @Override
     public void solveForces()
     {
         tensileForce_.set(end_.position).subtract(begin_.position);
@@ -75,13 +83,15 @@ public abstract class IRopePiece
         tensileForce_.multiply(force / tensileLength_);
     }
 
-    public void applyTensileForceTo(IRopeJoint joint, Vector3 totalForce)
+    @Override
+    public void solveMotion()
     {
-        assert (joint == begin_ || joint == end_);
-        if (joint == begin_)
-            totalForce.add(tensileForce_);
-        else
-            totalForce.subtract(tensileForce_);
+    }
+
+    @Override
+    public boolean isActiveEntity()
+    {
+        return begin_.isActiveEntity() || end_.isActiveEntity();
     }
 
 }
