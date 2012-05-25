@@ -8,13 +8,13 @@ import codechicken.core.Vector3;
 // rope piece has fixed length = 1m
 public abstract class IRopePiece
 {
-    private static final double cBaseLength = 1D; 
-    
+    private static final double cBaseLength = 1D;
+
     private IRopeJoint begin_;
     private IRopeJoint end_;
-    
-    private double currentLength_;
-    private double currentForce_;
+
+    private Vector3 tensileForce_ = new Vector3();
+    private double tensileLength_ = cBaseLength;
 
     public IRopePiece(IRopeJoint begin, IRopeJoint end)
     {
@@ -22,6 +22,10 @@ public abstract class IRopePiece
 
         begin_ = begin;
         end_ = end;
+
+        begin_.attachRope(this);
+        end_.attachRope(this);
+        solveForces();
     }
 
     public IRopeJoint begin()
@@ -34,23 +38,11 @@ public abstract class IRopePiece
         return end_;
     }
 
-    public abstract double mass();
-    
-    public abstract double contractionConst();
-    
-    public abstract double expansionConst();
+    public abstract double getRopePieceMass();
 
-    public double springLength()
-    {
-        return currentLength_;
-    }
-    
-    public double springForce()
-    {
-        return currentForce_;
-    }
-    
-    
+    public abstract double getContractionConst();
+
+    public abstract double getExpansionConst();
 
     public IRopeJoint other(IRopeJoint joint)
     {
@@ -71,25 +63,25 @@ public abstract class IRopePiece
         else
             end_ = newJoint;
     }
-    
-    
-    public void onGameTick()
+
+    public void solveForces()
     {
-        currentLength_ = begin_.position().copy().subtract(end_.position()).mag();
+        tensileForce_.set(end_.position).subtract(begin_.position);
+        tensileLength_ = tensileForce_.mag();
 
-        double delta = currentLength_ - cBaseLength;
-        currentForce_ = delta > 0 ? contractionConst() * delta : expansionConst() * delta; 
+        final double delta = tensileLength_ - cBaseLength;
+        final double force = delta > 0 ? getContractionConst() * delta : getExpansionConst() * delta;
+
+        tensileForce_.multiply(force / tensileLength_);
     }
-    
 
-    //    public double calcLength()
-    //    {
-    //        return begin().position().copy().subtract(end().position()).mag(); 
-    //    }
-    //
-    //
-    //    public Vector3 otherJointDirection(IRopeJoint joint)
-    //    {
-    //        return other(joint).position_.copy().subtract(joint.position_);
-    //    }
+    public void applyTensileForceTo(IRopeJoint joint, Vector3 totalForce)
+    {
+        assert (joint == begin_ || joint == end_);
+        if (joint == begin_)
+            totalForce.add(tensileForce_);
+        else
+            totalForce.subtract(tensileForce_);
+    }
+
 }

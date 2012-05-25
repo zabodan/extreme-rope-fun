@@ -5,50 +5,65 @@ import codechicken.core.Vector3;
 
 public abstract class IRopeJoint
 {
+    private static final double cGravitation = -9.81;
+    private static final double cAirFriction = -0.02;
+
+    // temporary Vector3 to help computations without allocating memory
+    private static Vector3 temp_ = new Vector3();
+
     private HashSet<IRopePiece> pieces_;
     private double totalMass_;
-    
-    private Vector3 prevPosition_;
-    private Vector3 currPosition_;
-    private Vector3 currVelocity_;
-    
+    private boolean inGround_ = false;
+
+    public Vector3 position = new Vector3();
+    public Vector3 velocity = new Vector3();
+    public Vector3 totalForce = new Vector3();
 
     public IRopeJoint()
     {
-        totalMass_ = mass();
+        totalMass_ = getRopeJointMass();
+        solveForces();
     }
 
-    public abstract Vector3 position();
+    public abstract double getRopeJointMass();
 
-    public abstract Vector3 velocity();
-
-    public abstract double mass();
-
-    public void attach(IRopePiece rp)
+    public void attachRope(IRopePiece rp)
     {
         if (pieces_.add(rp))
+            totalMass_ += rp.getRopePieceMass() / 2.0;
+    }
+
+    public void detachRope(IRopePiece rp)
+    {
+        if (pieces_.remove(rp))
+            totalMass_ -= rp.getRopePieceMass() / 2.0;
+    }
+
+    public void solveForces()
+    {
+        // start with gravitation
+        totalForce.set(0, cGravitation * totalMass_, 0);
+
+        // add air friction
+        totalForce.add(temp_.set(velocity).multiply(cAirFriction));
+
+        // add tensile forces from each attached rope piece
+        for (IRopePiece rp : pieces_)
+            rp.applyTensileForceTo(this, totalForce);
+
+        if (inGround_)
         {
-            totalMass_ += rp.mass() / 2.0;
+            // compute ground friction, absorption and repulsion, then add
+            // totalForce_.add(tempGroundFriction_).add(tempGroundAbsorption_).add(tempGroundRepulsion_);
         }
     }
 
-    public void detach(IRopePiece rp)
+    public void solveMotion()
     {
-        if (pieces_.remove(rp))
-        {
-            totalMass_ -= rp.mass() / 2.0;
-        }
-    }
-    
-    public void onGameTick()
-    {
-        prevPosition_ = currPosition_.copy();
-        
-        Vector3 motion = currVelocity_.copy().multiply(0.05D);
-        currPosition_.add(motion);
-        
-        Vector3 totalForce = new Vector3();
-        Vector3 acceleration = totalForce.multiply(1.0 / totalMass_);
+        final double timeSpan = 0.05D; // as long as there are 20 ticks per second
+
+        position.add(temp_.set(velocity).multiply(timeSpan));
+        velocity.add(temp_.set(totalForce).multiply(timeSpan / totalMass_));
     }
 
 }
