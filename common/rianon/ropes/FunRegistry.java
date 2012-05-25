@@ -2,23 +2,23 @@ package rianon.ropes;
 
 import java.util.ArrayList;
 
-public class FunManager
+public class FunRegistry
 {
-    private static FunManager instance_;
+    private static FunRegistry instance_;
 
     private ArrayList<IFunEntity> entities_ = new ArrayList<>();
     private ArrayList<IFunEntity> activeEntities_ = new ArrayList<>();
     private ArrayList<IFunEntity> activeNextTick_ = new ArrayList<>();
 
-    private FunManager()
+    private FunRegistry()
     {
         // load
     }
 
-    public static FunManager instance()
+    public static FunRegistry instance()
     {
         if (instance_ == null)
-            instance_ = new FunManager();
+            instance_ = new FunRegistry();
         return instance_;
     }
 

@@ -6,7 +6,7 @@ public abstract class IFunEntity
 
     protected IFunEntity()
     {
-        entityIdx_ = FunManager.instance().register(this);
+        entityIdx_ = FunRegistry.instance().register(this);
         assert entityIdx_ > 0;
     }
 
