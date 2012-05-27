@@ -1,15 +1,157 @@
 package rianon.ropes;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.Material;
+import java.util.ArrayList;
+
+import net.minecraft.src.*;
+import codechicken.core.Vector3;
 
 // support, end-point for ropes
+// block meta = side where it was placed
 public class BlockPiton extends Block
 {
+    
+    private static final AxisAlignedBB bboxes[] = {
+        AxisAlignedBB.getBoundingBox(0.4, 0.5, 0.4, 0.6, 1.0, 0.6),
+        AxisAlignedBB.getBoundingBox(0.4, 0.0, 0.4, 0.6, 0.5, 0.6),
+        AxisAlignedBB.getBoundingBox(0.4, 0.4, 0.5, 0.6, 0.6, 1.0),
+        AxisAlignedBB.getBoundingBox(0.4, 0.4, 0.0, 0.6, 0.6, 0.5),
+        AxisAlignedBB.getBoundingBox(0.5, 0.4, 0.4, 1.0, 0.6, 0.6),
+        AxisAlignedBB.getBoundingBox(0.0, 0.4, 0.4, 0.5, 0.6, 0.6)
+    };
 
-    protected BlockPiton(int id, Material material)
+    protected BlockPiton(int id)
     {
-        super(id, material);
+        super(id, Material.rock);
+
+        setHardness(1F);
+        setResistance(5F);
+        setBlockName("bpiton");
+        blockIndexInTexture = 107;
     }
+
+    @Override
+    public void onBlockPlaced(World world, int x, int y, int z, int side)
+    {
+        super.onBlockPlaced(world, x, y, z, side);
+
+        System.out.println("BlockPiton placed @ " + (new Vector3(x, y, z)) + ", side = " + side);
+        world.setBlockMetadata(x, y, z, side);
+    }
+    
+    @Override
+    protected int damageDropped(int meta)
+    {
+        return 0;
+    }
+    
+    @Override
+    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
+    {
+        ArrayList<ItemStack> drop = new ArrayList<>();
+        drop.add(new ItemStack(this, 3, 0));
+        return drop;
+    }
+    
+
+    @Override
+    public boolean blockActivated(World world, int x, int y, int z, EntityPlayer player)
+    {
+        if (player.isSneaking())
+            return false;
+
+        System.out.println("BlockPiton activated @ " + (new Vector3(x, y, z)) + ", meta = " + world.getBlockMetadata(x, y, z));
+        return true;
+    }
+    
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, int neighborID)
+    {
+        if (world.getBlockId(x, y, z) == blockID)
+        {
+            int side = world.getBlockMetadata(x, y, z);
+            if (!canPlaceBlockOnSide(world, x, y, z, side))
+            {
+                dropBlockAsItem(world, x, y, z, 0, 0);
+                world.setBlockWithNotify(x, y, z, 0);
+            }
+        }
+    }
+
+    @Override
+    public boolean isBlockSolidOnSide(World world, int x, int y, int z, int side)
+    {
+        return false; // do not connect anything to this block
+    }
+
+    @Override
+    public boolean canPlaceBlockAt(World world, int x, int y, int z)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean canPlaceBlockOnSide(World world, int x, int y, int z, int side)
+    {
+        switch (side)
+        {
+            case 0: return world.isBlockSolidOnSide(x, y + 1, z, 0);
+            case 1: return world.isBlockSolidOnSide(x, y - 1, z, 1);
+            case 2: return world.isBlockSolidOnSide(x, y, z + 1, 2);
+            case 3: return world.isBlockSolidOnSide(x, y, z - 1, 3);
+            case 4: return world.isBlockSolidOnSide(x + 1, y, z, 4);
+            case 5: return world.isBlockSolidOnSide(x - 1, y, z, 5);
+        }
+        return false;
+    }
+    
+    @Override
+    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z)
+    {
+        int side = world.getBlockMetadata(x, y, z);
+        return bboxes[side].copy().offset(x, y, z);
+    }
+    
+    @Override
+    public void setBlockBoundsBasedOnState(IBlockAccess ba, int x, int y, int z)
+    {
+        int side = ba.getBlockMetadata(x, y, z);
+
+        assert side >= 0 && side < 6;
+        setBlockBounds(bboxes[side]);
+    }
+    
+    @Override
+    public void setBlockBoundsForItemRender()
+    {
+        setBlockBounds(bboxes[1]);
+    }
+    
+    private void setBlockBounds(AxisAlignedBB bbox)
+    {
+        minX = bbox.minX;
+        minY = bbox.minY;
+        minZ = bbox.minZ;
+        maxX = bbox.maxX;
+        maxY = bbox.maxY;
+        maxZ = bbox.maxZ;
+    }
+    
+    @Override
+    public boolean renderAsNormalBlock()
+    {
+        return false;
+    }
+    
+    @Override
+    public boolean isOpaqueCube()
+    {
+        return false;
+    }
+
+//    @Override
+//    public int getRenderType()
+//    {
+//        return mod_RopeFun.ropeRenderID;
+//    }
 
 }

@@ -2,12 +2,16 @@ package rianon.ropes;
 
 public abstract class IFunEntity
 {
-    protected int entityIdx_;
+    protected int entityID_;
 
     protected IFunEntity()
     {
-        entityIdx_ = FunRegistry.instance().register(this);
-        assert entityIdx_ > 0;
+        entityID_ = FunRegistry.instance().register(this);
+    }
+
+    public int getID()
+    {
+        return entityID_;
     }
 
     public abstract void solveForces();

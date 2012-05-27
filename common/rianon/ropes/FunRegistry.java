@@ -9,6 +9,7 @@ public class FunRegistry
     private ArrayList<IFunEntity> entities_ = new ArrayList<>();
     private ArrayList<IFunEntity> activeEntities_ = new ArrayList<>();
     private ArrayList<IFunEntity> activeNextTick_ = new ArrayList<>();
+    
 
     private FunRegistry()
     {
@@ -24,7 +25,15 @@ public class FunRegistry
 
     public int register(IFunEntity en)
     {
-        return entities_.add(en) ? entities_.size() - 1 : -1;
+        if (!entities_.add(en))
+            throw new RuntimeException("failed to register another entity");
+        
+        return entities_.size() - 1;
+    }
+    
+    public void deregister(IFunEntity en)
+    {
+        //if (en.getID() == entities_.size() - 1)
     }
 
     public void onGameTick()
