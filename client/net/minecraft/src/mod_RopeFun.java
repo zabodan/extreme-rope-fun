@@ -1,7 +1,7 @@
 package net.minecraft.src;
 
 import net.minecraft.client.Minecraft;
-import rianon.ropes.RopeFunManager;
+import rianon.ropes.ResourceManager;
 
 public class mod_RopeFun extends BaseMod
 {
@@ -16,10 +16,10 @@ public class mod_RopeFun extends BaseMod
     @Override
     public void load()
     {
-        RopeFunManager.initialize();
+        ResourceManager.initialize();
         
-        ModLoader.addName(RopeFunManager.blockPiton, "Piton");
-        ModLoader.addName(RopeFunManager.itemRope, "Rope");
+        ModLoader.addName(ResourceManager.blockPiton, "Piton");
+        ModLoader.addName(ResourceManager.itemRope, "Rope");
         
         ropeRenderID = 0; //ModLoader.getUniqueBlockModelID(this, false);
         

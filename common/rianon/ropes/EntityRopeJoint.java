@@ -1,166 +1,99 @@
 package rianon.ropes;
 
-import java.util.HashSet;
-
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.World;
+import net.minecraft.src.*;
 import codechicken.core.Vector3;
 
+// EntityRopeJoint entity is used as IFunRopeAttractor when managed by dragMan_
 public class EntityRopeJoint extends Entity
-    implements IRopeJoint
+    implements IFunRopeAttractor
 {
-    private static final double cGravitation = -9.81;
-    private static final double cAirFriction = -0.02;
-    private static final double cManagerTension = 10;
-    private static final double cMaxVelocity = 8; // m/s
+    protected static final double cFirmGripDistSquared = 0.25;
+    protected static final double cAttractionFactor = 100.0;
+    protected static Vector3 temp_ = new Vector3();
 
-    // temporary Vector3 to help computations without allocating memory
-    private static Vector3 temp_ = new Vector3();
-
-    
-    protected int funEntityID_;
+    protected EntityPlayer dragMan_ = null;
+    protected FunRopeJoint ropeJoint_;
     protected Vector3 position_;
-    protected Vector3 velocity_;
-    protected Vector3 totalForce_;
-    protected double totalMass_;
-    
-    protected HashSet<RopePieceBase> ropes_ = new HashSet<>();
-    
 
-    protected EntityPlayer manager_ = null;
-     
-    
-    public EntityRopeJoint(World world)
+    protected EntityRopeJoint(World world, Vector3 pos)
     {
         super(world);
-        super.preventEntitySpawning = true;
-        
-        position_ = Vector3.fromEntity(this);
-        velocity_ = new Vector3(motionX, motionY, motionZ);
-        totalForce_ = new Vector3(0, 0, 0);
-        totalMass_ = getRopeJointOwnMass();
-        FunRegistry.instance().register(this);
+        preventEntitySpawning = true;
+
+        ropeJoint_ = new FunRopeJoint(0.01f, pos);
+        position_ = pos.copy();
     }
 
-    @Override
-    protected void entityInit() {}
-
-    @Override
-    protected void readEntityFromNBT(NBTTagCompound var1) {}
-
-    @Override
-    protected void writeEntityToNBT(NBTTagCompound var1) {}
-    
-    @Override
-    public void onUpdate() {}
-    
-
-
-    
-    @Override
-    public int getFunEntityID()
+    public boolean tryToDragJoint(EntityPlayer player)
     {
-        return funEntityID_;
+        if (dragMan_ != null)
+            return dragMan_ == player;
+
+        dragMan_ = player;
+        ropeJoint_.attractTo(this);
+        return true;
     }
 
-    @Override
-    public void setFunEntityID(int id)
+    public void releaseJoint(EntityPlayer player)
     {
-        funEntityID_ = id;
-    }
-
-    @Override
-    public void solveForces()
-    {
-        // start with gravitation
-        totalForce_.set(0, cGravitation * totalMass_, 0);
-
-        // add air drag
-        totalForce_.add(temp_.set(velocity_).multiply(cAirFriction));
-
-        // add tensile forces from each attached rope piece
-        for (RopePieceBase rp : ropes_)
-            rp.applyTensileForceTo(this, totalForce_);
-        
-        if (manager_ != null)
+        if (dragMan_ == player)
         {
-            if (manager_.isDead)
-            {
-                manager_ = null;
-            }
-            else
-            {
-                // as temporary solution, add big tensile force towards player
-                totalForce_.add(temp_.set(manager_.posX, manager_.posY + manager_.yOffset, manager_.posZ).subtract(position_).multiply(cManagerTension));
-            }
+            dragMan_ = null;
+            ropeJoint_.release();
         }
     }
 
     @Override
-    public void solveMotion()
+    protected void entityInit()
     {
-        final double timeSpan = 0.05D; // as long as there are 20 ticks per second
-        assert totalMass_ > 0;
+    }
 
-        position_.add(temp_.set(velocity_).multiply(timeSpan));
-        velocity_.add(temp_.set(totalForce_).multiply(timeSpan / totalMass_));
+    @Override
+    protected void readEntityFromNBT(NBTTagCompound var1)
+    {
+    }
 
-        // limit maximum velocity
-        final double v = velocity_.mag();
-        if (v > cMaxVelocity)
-            velocity_.multiply(cMaxVelocity / v);
-        
-        lastTickPosX = prevPosX = posX;
-        lastTickPosY = prevPosY = posY;
-        lastTickPosZ = prevPosZ = posZ;
-        
+    @Override
+    protected void writeEntityToNBT(NBTTagCompound var1)
+    {
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        if (dragMan_ != null && dragMan_.isDead)
+            releaseJoint(dragMan_);
+
+        if (dragMan_ != null)
+            // attractor position
+            position_.set(dragMan_.posX, dragMan_.posY + dragMan_.yOffset, dragMan_.posZ);
+        else
+            // free joint
+            position_.set(ropeJoint_.position);
+
         posX = position_.x;
         posY = position_.y;
         posZ = position_.z;
-        
-        motionX = velocity_.x;
-        motionY = velocity_.y;
-        motionZ = velocity_.z;
+
+        super.onUpdate();
     }
 
     @Override
-    public boolean isActiveEntity()
+    public Vector3 getDragForceAt(Vector3 pos)
     {
-        return !velocity_.isZero();
+        return temp_.set(position_).subtract(pos).multiply(cAttractionFactor);
     }
 
     @Override
-    public double getRopeJointOwnMass()
+    public boolean inFirmGrip(Vector3 pos)
     {
-        return 1;
+        return temp_.set(pos).subtract(position_).magSquared() < cFirmGripDistSquared;
     }
 
     @Override
-    public void attachRopePiece(RopePieceBase rp)
-    {
-        if (ropes_.add(rp))
-            totalMass_ += rp.getRopePieceMass();
-    }
-
-    @Override
-    public void detachRopePiece(RopePieceBase rp)
-    {
-        if (ropes_.remove(rp))
-            totalMass_ -= rp.getRopePieceMass();
-    }
-
-    @Override
-    public Vector3 position()
+    public Vector3 getPosition()
     {
         return position_;
-    }
-
-    @Override
-    public Vector3 velocity()
-    {
-        return velocity_;
     }
 
 }

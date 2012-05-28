@@ -23,12 +23,12 @@ public class FunRegistry
         return instance_;
     }
 
-    public void register(IFunEntity en)
+    public int register(IFunEntity en)
     {
         if (!entities_.add(en))
             throw new RuntimeException("failed to register another entity");
         
-        en.setFunEntityID(entities_.size() - 1);
+        return entities_.size() - 1;
     }
     
     public void deregister(IFunEntity en)

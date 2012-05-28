@@ -10,7 +10,7 @@ import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
 import codechicken.core.CoreUtils;
 
-public class RopeFunManager
+public class ResourceManager
 {
     private static boolean initialized = false;
     private static final Configuration config = new Configuration(new File(CoreUtils.getMinecraftDir(), "/config/RopeFun.cfg"));
