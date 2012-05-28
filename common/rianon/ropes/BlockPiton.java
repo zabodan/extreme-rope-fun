@@ -11,12 +11,12 @@ public class BlockPiton extends Block
 {
     
     private static final AxisAlignedBB bboxes[] = {
-        AxisAlignedBB.getBoundingBox(0.4, 0.5, 0.4, 0.6, 1.0, 0.6),
-        AxisAlignedBB.getBoundingBox(0.4, 0.0, 0.4, 0.6, 0.5, 0.6),
-        AxisAlignedBB.getBoundingBox(0.4, 0.4, 0.5, 0.6, 0.6, 1.0),
-        AxisAlignedBB.getBoundingBox(0.4, 0.4, 0.0, 0.6, 0.6, 0.5),
-        AxisAlignedBB.getBoundingBox(0.5, 0.4, 0.4, 1.0, 0.6, 0.6),
-        AxisAlignedBB.getBoundingBox(0.0, 0.4, 0.4, 0.5, 0.6, 0.6)
+        AxisAlignedBB.getBoundingBox(0.38, 0.4, 0.38, 0.62, 1.0, 0.62),
+        AxisAlignedBB.getBoundingBox(0.38, 0.0, 0.38, 0.62, 0.6, 0.62),
+        AxisAlignedBB.getBoundingBox(0.38, 0.38, 0.4, 0.62, 0.62, 1.0),
+        AxisAlignedBB.getBoundingBox(0.38, 0.38, 0.0, 0.62, 0.62, 0.6),
+        AxisAlignedBB.getBoundingBox(0.4, 0.38, 0.38, 1.0, 0.62, 0.62),
+        AxisAlignedBB.getBoundingBox(0.0, 0.38, 0.38, 0.6, 0.62, 0.62)
     };
 
     protected BlockPiton(int id)
@@ -25,8 +25,8 @@ public class BlockPiton extends Block
 
         setHardness(1F);
         setResistance(5F);
-        setBlockName("bpiton");
-        blockIndexInTexture = 107;
+        setBlockName("rf.bpiton");
+        blockIndexInTexture = 6; //107;
     }
 
     @Override
@@ -58,9 +58,21 @@ public class BlockPiton extends Block
     {
         if (player.isSneaking())
             return false;
-
-        System.out.println("BlockPiton activated @ " + (new Vector3(x, y, z)) + ", meta = " + world.getBlockMetadata(x, y, z));
-        return true;
+        
+        ItemStack stack = player.getCurrentEquippedItem();
+        if (stack != null && stack.getItem() instanceof ItemRope)
+        {
+            System.out.println("BlockPiton activated with rope @ " + (new Vector3(x, y, z)) + ", meta = " + world.getBlockMetadata(x, y, z));
+            return true;
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity)
+    {
+        //System.out.println("onEntityCollidedWithBlock @ " + (new Vector3(x, y, z)) + ", meta = " + world.getBlockMetadata(x, y, z));
     }
     
     @Override
@@ -124,6 +136,7 @@ public class BlockPiton extends Block
     public void setBlockBoundsForItemRender()
     {
         setBlockBounds(bboxes[1]);
+        //setBlockBounds(0,0,0,1,1,1);
     }
     
     private void setBlockBounds(AxisAlignedBB bbox)

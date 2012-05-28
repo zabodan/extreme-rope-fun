@@ -1,22 +1,14 @@
 package rianon.ropes;
 
-public abstract class IFunEntity
+public interface IFunEntity
 {
-    protected int entityID_;
+    public int getFunEntityID();
+    
+    public void setFunEntityID(int id);
 
-    protected IFunEntity()
-    {
-        entityID_ = FunRegistry.instance().register(this);
-    }
+    public void solveForces();
 
-    public int getID()
-    {
-        return entityID_;
-    }
+    public void solveMotion();
 
-    public abstract void solveForces();
-
-    public abstract void solveMotion();
-
-    public abstract boolean isActiveEntity();
+    public boolean isActiveEntity();
 }

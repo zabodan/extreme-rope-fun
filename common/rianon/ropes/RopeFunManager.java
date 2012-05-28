@@ -15,8 +15,9 @@ public class RopeFunManager
     private static boolean initialized = false;
     private static final Configuration config = new Configuration(new File(CoreUtils.getMinecraftDir(), "/config/RopeFun.cfg"));
     private static final BowHandler bowHandler = new BowHandler();
-    private static final BlockPiton blockPiton = new BlockPiton(201);
-
+    
+    public static final Block blockPiton = new BlockPiton(201);
+    public static final Item itemRope = new ItemRope(701);
     
     public static void initialize()
     {
@@ -40,6 +41,8 @@ public class RopeFunManager
         ModLoader.addShapelessRecipe(new ItemStack(blockPiton, 1, 0), new Object[] {
             Block.dirt, Block.dirt });
         
+        ModLoader.addShapelessRecipe(new ItemStack(itemRope, 1, 0), new Object[] {
+            Block.cloth, Block.cloth });
         
         // ...
         

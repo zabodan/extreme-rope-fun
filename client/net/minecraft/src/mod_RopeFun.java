@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import net.minecraft.client.Minecraft;
 import rianon.ropes.RopeFunManager;
 
 public class mod_RopeFun extends BaseMod
@@ -17,9 +18,15 @@ public class mod_RopeFun extends BaseMod
     {
         RopeFunManager.initialize();
         
+        ModLoader.addName(RopeFunManager.blockPiton, "Piton");
+        ModLoader.addName(RopeFunManager.itemRope, "Rope");
+        
         ropeRenderID = 0; //ModLoader.getUniqueBlockModelID(this, false);
+        
+        ModLoader.setInGameHook(this, true, false);
     }
 
+    
     @Override
     public String getPriorities()
     {
@@ -48,4 +55,13 @@ public class mod_RopeFun extends BaseMod
 //                RenderPiton.renderInvBlock(rb, block);
         }
     }
+    
+    @Override
+    public boolean onTickInGame(float var1, Minecraft var2)
+    {
+        //System.out.println("onTickInGame");
+        return true; //return super.onTickInGame(var1, var2);
+    }
+    
+    
 }

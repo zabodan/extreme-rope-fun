@@ -3,7 +3,8 @@ package rianon.ropes;
 import codechicken.core.Vector3;
 
 // rope piece has fixed length = 1m
-public abstract class IRopePiece extends IFunEntity
+public abstract class RopePieceBase
+    implements IFunEntity
 {
     private static final double cBaseLength = 1D;
 
@@ -13,7 +14,7 @@ public abstract class IRopePiece extends IFunEntity
     private Vector3 tensileForce_ = new Vector3();
     private double tensileLength_ = cBaseLength;
 
-    public IRopePiece(IRopeJoint begin, IRopeJoint end)
+    public RopePieceBase(IRopeJoint begin, IRopeJoint end)
     {
         super(); // start as active entity
         assert begin != null && end != null;
@@ -71,10 +72,9 @@ public abstract class IRopePiece extends IFunEntity
             totalForce.subtract(tensileForce_);
     }
 
-    @Override
     public void solveForces()
     {
-        tensileForce_.set(end_.position).subtract(begin_.position);
+        tensileForce_.set(end_.position()).subtract(begin_.position());
         tensileLength_ = tensileForce_.mag();
 
         final double delta = tensileLength_ - cBaseLength;
@@ -83,12 +83,10 @@ public abstract class IRopePiece extends IFunEntity
         tensileForce_.multiply(force / tensileLength_);
     }
 
-    @Override
     public void solveMotion()
     {
     }
 
-    @Override
     public boolean isActiveEntity()
     {
         return begin_.isActiveEntity() || end_.isActiveEntity();
