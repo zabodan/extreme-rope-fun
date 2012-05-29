@@ -25,7 +25,7 @@ public class BlockPiton extends Block
 
         setHardness(1F);
         setResistance(5F);
-        setBlockName("rf.bpiton");
+        setBlockName("block.rfpiton");
         blockIndexInTexture = 6; //107;
     }
 

@@ -12,7 +12,7 @@ public class ItemRope extends Item
     {
         super(id);
         setIconIndex(0);
-        setItemName("rf.irope");
+        setItemName("item.rfrope");
     }
 
     @Override

@@ -8,5 +8,6 @@ public class ItemGrapple extends Item
     protected ItemGrapple(int id)
     {
         super(id);
+        setItemName("item.rfgrapple");
     }
 }

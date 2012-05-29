@@ -13,10 +13,9 @@ public class FunRopeJoint extends IFunEntity
     // temporary Vector3 to help computations without allocating memory
     private static Vector3 temp_ = new Vector3();
 
-    private HashSet<FunRopePiece> edges_;
-    private double totalMass_;
-    //private boolean inGround_ = false;
+    private HashSet<FunRopePiece> ropes_;
     private IFunRopeAttractor attractor_ = null;
+    private double totalMass_;
 
     public Vector3 position;
     public Vector3 velocity = new Vector3();
@@ -30,6 +29,11 @@ public class FunRopeJoint extends IFunEntity
         solveForces();
     }
     
+    public void push(Vector3 delta)
+    {
+        position.add(delta);
+        activateNextTick();
+    }
     
     public void attractTo(IFunRopeAttractor attr)
     {
@@ -43,15 +47,32 @@ public class FunRopeJoint extends IFunEntity
         activateNextTick();
     }
 
-    public void attachRopePiece(FunRopePiece rp)
+    public void activateNextTick()
     {
-        if (edges_.add(rp))
+        FunRegistry.instance().activateNextTick(this);
+        for (FunRopePiece rp : ropes_)
+            FunRegistry.instance().activateNextTick(rp);
+    }
+    
+    public void renderNextFrame()
+    {
+        FunRegistry.instance().renderNextFrame(this);
+        for (FunRopePiece rp : ropes_)
+            FunRegistry.instance().renderNextFrame(rp);
+    }
+    
+    
+    // should be used only by FunRopePiece
+    protected void attachRopePiece(FunRopePiece rp)
+    {
+        if (ropes_.add(rp))
             totalMass_ += rp.type().pieceMass / 2.0;
     }
 
-    public void detachRopePiece(FunRopePiece rp)
+    // should be used only by FunRopePiece
+    protected void detachRopePiece(FunRopePiece rp)
     {
-        if (edges_.remove(rp))
+        if (ropes_.remove(rp))
             totalMass_ -= rp.type().pieceMass / 2.0;
     }
 
@@ -65,17 +86,13 @@ public class FunRopeJoint extends IFunEntity
         totalForce.add(temp_.set(velocity).multiply(cAirFriction));
 
         // add tensile forces from each attached rope piece
-        for (FunRopePiece rp : edges_)
+        for (FunRopePiece rp : ropes_)
             rp.applyTensileForceTo(this, totalForce);
 
-//        if (inGround_)
-//        {
-//            // compute ground friction, absorption and repulsion, then add
-//            // totalForce_.add(tempGroundFriction_).add(tempGroundAbsorption_).add(tempGroundRepulsion_);
-//        }
+        // TODO compute ground friction, absorption and repulsion, then add
         
         if (attractor_ != null)
-            totalForce.add(attractor_.getDragForceAt(position));
+            totalForce.add(attractor_.getPullingForceAt(position));
     }
 
     @Override
@@ -100,9 +117,16 @@ public class FunRopeJoint extends IFunEntity
     }
 
     @Override
-    public boolean isActiveEntity()
+    public boolean doesRemainActive()
     {
         return !velocity.isZero();
+    }
+    
+    @Override
+    public void onRender()
+    {
+        // TODO Auto-generated method stub
+        
     }
     
 }

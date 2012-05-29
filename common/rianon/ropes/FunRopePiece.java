@@ -17,7 +17,7 @@ public class FunRopePiece extends IFunEntity
 
     public FunRopePiece(FunRopeJoint begin, FunRopeJoint end, FunRopeType ropeType)
     {
-        super(); // start as active entity
+        super();
         assert begin != null && end != null;
 
         begin_ = begin;
@@ -30,16 +30,16 @@ public class FunRopePiece extends IFunEntity
         solveForces();
     }
 
-    public FunRopeJoint begin()
-    {
-        return begin_;
-    }
-
-    public FunRopeJoint end()
-    {
-        return end_;
-    }
-    
+//    public FunRopeJoint begin()
+//    {
+//        return begin_;
+//    }
+//
+//    public FunRopeJoint end()
+//    {
+//        return end_;
+//    }
+//    
     public FunRopeType type()
     {
         return type_;
@@ -92,9 +92,16 @@ public class FunRopePiece extends IFunEntity
     }
 
     @Override
-    public boolean isActiveEntity()
+    public boolean doesRemainActive()
     {
-        return begin_.isActiveEntity() || end_.isActiveEntity();
+        return begin_.doesRemainActive() || end_.doesRemainActive();
+    }
+    
+    @Override
+    public void onRender()
+    {
+        // TODO Auto-generated method stub
+        
     }
 
 }

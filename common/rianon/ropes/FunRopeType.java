@@ -25,12 +25,6 @@ public enum FunRopeType
 
     public static FunRopeType fromMeta(int idx)
     {
-        switch (idx)
-        {
-        case 0: return silk;
-        case 1: return steel;
-        case 2: return composite;
-        }
-        throw new RuntimeException("Unknown rope metaIndex");
+        return FunRopeType.values()[idx];
     }
 }

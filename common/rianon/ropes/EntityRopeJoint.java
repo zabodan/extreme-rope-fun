@@ -24,7 +24,7 @@ public class EntityRopeJoint extends Entity
         position_ = pos.copy();
     }
 
-    public boolean tryToDragJoint(EntityPlayer player)
+    public boolean tryPullingJoint(EntityPlayer player)
     {
         if (dragMan_ != null)
             return dragMan_ == player;
@@ -78,16 +78,20 @@ public class EntityRopeJoint extends Entity
         super.onUpdate();
     }
 
+    
     @Override
-    public Vector3 getDragForceAt(Vector3 pos)
+    public Vector3 getPullingForceAt(Vector3 pos)
     {
-        return temp_.set(position_).subtract(pos).multiply(cAttractionFactor);
+        if (inFirmGrip(pos)) // temp_ = position_ - pos
+            return temp_.set(0,0,0);
+        
+        return temp_.multiply(cAttractionFactor);
     }
 
     @Override
     public boolean inFirmGrip(Vector3 pos)
     {
-        return temp_.set(pos).subtract(position_).magSquared() < cFirmGripDistSquared;
+        return temp_.set(position_).subtract(pos).magSquared() <= cFirmGripDistSquared;
     }
 
     @Override

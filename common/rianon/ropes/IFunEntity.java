@@ -6,7 +6,7 @@ public abstract class IFunEntity
 
     protected IFunEntity()
     {
-        entityID_ = FunRegistry.instance().register(this);        
+        FunRegistry.instance().register(this);        
     }
     
     public int getFunEntityID()
@@ -14,14 +14,19 @@ public abstract class IFunEntity
         return entityID_;
     }
     
+    public void setFunEntityId(int id)
+    {
+        entityID_ = id;
+    }
+    
     public abstract void solveForces();
 
     public abstract void solveMotion();
 
-    public abstract boolean isActiveEntity();
+    // tells FunRegistry whether this entity remains active on next turn
+    public abstract boolean doesRemainActive();
     
-    public void activateNextTick()
-    {
-        FunRegistry.instance().activateNextTick(this);
-    }
+    // please do not call renderNextFrame() from here
+    // EntityRopeJoint is responsible for that
+    public abstract void onRender();
 }
