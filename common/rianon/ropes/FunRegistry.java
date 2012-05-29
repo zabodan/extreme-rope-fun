@@ -47,18 +47,10 @@ public class FunRegistry
 
     public void register(IFunEntity en)
     {
-        FunHolder f = new FunHolder(en); 
-        
-        if (!entities_.add(f))
+        if (!entities_.add(new FunHolder(en)))
             throw new RuntimeException("failed to register another entity");
         
         en.setFunEntityId(entities_.size() - 1);
-        
-        if (en.doesRemainActive())
-        {
-            activeNextTick_.add(en);
-            f.activeNextTick = true;
-        }
     }
     
     public void deregister(IFunEntity en)

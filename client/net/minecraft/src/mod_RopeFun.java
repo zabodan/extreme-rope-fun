@@ -1,6 +1,9 @@
 package net.minecraft.src;
 
+import java.util.Map;
+
 import net.minecraft.client.Minecraft;
+import rianon.ropes.EntityRopeJoint;
 import rianon.ropes.ResourceManager;
 
 public class mod_RopeFun extends BaseMod
@@ -34,6 +37,12 @@ public class mod_RopeFun extends BaseMod
     }
     
     @Override
+    public void addRenderer(Map renderMap)
+    {
+        renderMap.put(EntityRopeJoint.class, new RenderSnowball(Item.snowball.getIconFromDamage(0))); 
+    }
+    
+    @Override
     public boolean renderWorldBlock(RenderBlocks rb, IBlockAccess ba, int i, int j, int k, Block block, int model)
     {
         System.out.println("renderWorldBlock");
@@ -57,9 +66,9 @@ public class mod_RopeFun extends BaseMod
     }
     
     @Override
-    public boolean onTickInGame(float var1, Minecraft var2)
+    public boolean onTickInGame(float partOfTick, Minecraft mc)
     {
-        //System.out.println("onTickInGame");
+        //System.out.println("onTickInGame, elapsed = " + partOfTick);
         return true; //return super.onTickInGame(var1, var2);
     }
     

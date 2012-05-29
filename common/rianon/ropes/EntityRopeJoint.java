@@ -22,6 +22,8 @@ public class EntityRopeJoint extends Entity
 
         ropeJoint_ = new FunRopeJoint(0.01f, pos);
         position_ = pos.copy();
+    
+        System.out.println("EntityRopeJoint born @ " + position_);
     }
 
     public boolean tryPullingJoint(EntityPlayer player)
@@ -77,6 +79,21 @@ public class EntityRopeJoint extends Entity
 
         super.onUpdate();
     }
+    
+    @Override
+    public void setDead()
+    {
+        if (!ropeJoint_.getConnectedRopes().isEmpty())
+            throw new RuntimeException("Dont you dare kill connected FunRopeJoin!");
+            
+        ropeJoint_.deregister();
+        ropeJoint_ = null;
+        
+        System.out.println("EntityRopeJoint died @ " + position_ + " after life of " + ticksExisted + " ticks");
+        super.setDead();
+    }
+    
+    //ren
 
     
     @Override
@@ -98,6 +115,19 @@ public class EntityRopeJoint extends Entity
     public Vector3 getPosition()
     {
         return position_;
+    }
+    
+    
+    @Override
+    public boolean canBeCollidedWith()
+    {
+        return true;
+    }
+    
+    @Override
+    public boolean canBePushed()
+    {
+        return true;
     }
 
 }

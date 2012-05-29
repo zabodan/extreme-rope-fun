@@ -9,6 +9,11 @@ public abstract class IFunEntity
         FunRegistry.instance().register(this);        
     }
     
+    public void deregister()
+    {
+        FunRegistry.instance().deregister(this);
+    }
+    
     public int getFunEntityID()
     {
         return entityID_;

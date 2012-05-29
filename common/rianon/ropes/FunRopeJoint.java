@@ -13,7 +13,7 @@ public class FunRopeJoint extends IFunEntity
     // temporary Vector3 to help computations without allocating memory
     private static Vector3 temp_ = new Vector3();
 
-    private HashSet<FunRopePiece> ropes_;
+    private HashSet<FunRopePiece> ropes_ = new HashSet<>();
     private IFunRopeAttractor attractor_ = null;
     private double totalMass_;
 
@@ -25,8 +25,6 @@ public class FunRopeJoint extends IFunEntity
     {
         totalMass_ = jointMass;
         position = pos.copy();
-        
-        solveForces();
     }
     
     public void push(Vector3 delta)
@@ -60,6 +58,12 @@ public class FunRopeJoint extends IFunEntity
         for (FunRopePiece rp : ropes_)
             FunRegistry.instance().renderNextFrame(rp);
     }
+    
+    public HashSet<FunRopePiece> getConnectedRopes()
+    {
+        return ropes_;
+    }
+    
     
     
     // should be used only by FunRopePiece

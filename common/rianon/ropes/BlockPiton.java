@@ -62,7 +62,12 @@ public class BlockPiton extends Block
         ItemStack stack = player.getCurrentEquippedItem();
         if (stack != null && stack.getItem() instanceof ItemRope)
         {
-            System.out.println("BlockPiton activated with rope @ " + (new Vector3(x, y, z)) + ", meta = " + world.getBlockMetadata(x, y, z));
+            Vector3 blockPos = new Vector3(x, y, z);
+            System.out.println("BlockPiton activated with rope @ " + blockPos + ", meta = " + world.getBlockMetadata(x, y, z));
+            
+            //Vector3 jointPos = Vector3.fromEntity(player).add(blockPos).multiply(0.5);
+            world.spawnEntityInWorld(new EntityRopeJoint(world, blockPos));
+            
             return true;
         }
         
