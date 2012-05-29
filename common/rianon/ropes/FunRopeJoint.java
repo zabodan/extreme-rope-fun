@@ -52,18 +52,11 @@ public class FunRopeJoint extends IFunEntity
             FunRegistry.instance().activateNextTick(rp);
     }
     
-    public void renderNextFrame()
-    {
-        FunRegistry.instance().renderNextFrame(this);
-        for (FunRopePiece rp : ropes_)
-            FunRegistry.instance().renderNextFrame(rp);
-    }
     
     public HashSet<FunRopePiece> getConnectedRopes()
     {
         return ropes_;
     }
-    
     
     
     // should be used only by FunRopePiece
@@ -124,13 +117,6 @@ public class FunRopeJoint extends IFunEntity
     public boolean doesRemainActive()
     {
         return !velocity.isZero();
-    }
-    
-    @Override
-    public void onRender()
-    {
-        // TODO Auto-generated method stub
-        
     }
     
 }

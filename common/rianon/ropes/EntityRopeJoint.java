@@ -18,6 +18,10 @@ public class EntityRopeJoint extends Entity
     protected EntityRopeJoint(World world, Vector3 pos)
     {
         super(world);
+        setSize(0.25F, 0.25F);
+        setPosition(pos.x, pos.y, pos.z);
+        setRotation(0, 0);
+        setVelocity(0, 0, 0);
         preventEntitySpawning = true;
 
         ropeJoint_ = new FunRopeJoint(0.01f, pos);
@@ -43,6 +47,11 @@ public class EntityRopeJoint extends Entity
             dragMan_ = null;
             ropeJoint_.release();
         }
+    }
+    
+    public FunRopeJoint getJoint()
+    {
+        return ropeJoint_;
     }
 
     @Override
@@ -77,7 +86,9 @@ public class EntityRopeJoint extends Entity
         posY = position_.y;
         posZ = position_.z;
 
-        super.onUpdate();
+        //super.onUpdate();
+        if (++ticksExisted == 200)
+            setDead();
     }
     
     @Override
@@ -92,9 +103,6 @@ public class EntityRopeJoint extends Entity
         System.out.println("EntityRopeJoint died @ " + position_ + " after life of " + ticksExisted + " ticks");
         super.setDead();
     }
-    
-    //ren
-
     
     @Override
     public Vector3 getPullingForceAt(Vector3 pos)
@@ -117,17 +125,4 @@ public class EntityRopeJoint extends Entity
         return position_;
     }
     
-    
-    @Override
-    public boolean canBeCollidedWith()
-    {
-        return true;
-    }
-    
-    @Override
-    public boolean canBePushed()
-    {
-        return true;
-    }
-
 }

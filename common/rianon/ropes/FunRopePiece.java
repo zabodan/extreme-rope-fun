@@ -97,11 +97,4 @@ public class FunRopePiece extends IFunEntity
         return begin_.doesRemainActive() || end_.doesRemainActive();
     }
     
-    @Override
-    public void onRender()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
 }

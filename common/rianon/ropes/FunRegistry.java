@@ -9,7 +9,6 @@ public class FunRegistry
     {
         protected IFunEntity entity;
         protected boolean activeNextTick = false;
-        protected boolean renderNextFrame = false;
         
         protected FunHolder(IFunEntity en)
         {
@@ -21,11 +20,8 @@ public class FunRegistry
     private static FunRegistry instance_;
 
     private ArrayList<FunHolder> entities_ = new ArrayList<>();
-    
     private ArrayList<IFunEntity> activeEntities_ = new ArrayList<>();
     private ArrayList<IFunEntity> activeNextTick_ = new ArrayList<>();
-    
-    private ArrayList<IFunEntity> renderNextFrame_ = new ArrayList<>();
     
 
     private FunRegistry()
@@ -78,20 +74,6 @@ public class FunRegistry
         activeNextTick_ = new ArrayList<>();
     }
     
-    public void onRender()
-    {
-        ArrayList<IFunEntity> toRender = renderNextFrame_;
-        renderNextFrame_ = new ArrayList<>();
-        
-        for (IFunEntity en : toRender)
-            fun(en).renderNextFrame = false;
-
-        for (IFunEntity en : toRender)
-            en.onRender();
-        
-        // EntityRopeJoint is responsible for rendering join and adjacent rope pieces on each subsequent frame
-    }
-    
     public void activateNextTick(IFunEntity en)
     {
         if (!fun(en).activeNextTick)
@@ -101,9 +83,4 @@ public class FunRegistry
         }
     }
     
-    public void renderNextFrame(IFunEntity en)
-    {
-//        renderNextFrame_.add(en);
-    }
-
 }

@@ -2,8 +2,11 @@ package net.minecraft.src;
 
 import java.util.Map;
 
+import codechicken.core.CoreUtils;
+
 import net.minecraft.client.Minecraft;
 import rianon.ropes.EntityRopeJoint;
+import rianon.ropes.RenderRope;
 import rianon.ropes.ResourceManager;
 
 public class mod_RopeFun extends BaseMod
@@ -21,8 +24,11 @@ public class mod_RopeFun extends BaseMod
     {
         ResourceManager.initialize();
         
-        ModLoader.addName(ResourceManager.blockPiton, "Piton");
-        ModLoader.addName(ResourceManager.itemRope, "Rope");
+        
+        CoreUtils.addLocalization(ResourceManager.blockPiton.getBlockName() + ".name", "Piton");
+        CoreUtils.addLocalization(ResourceManager.itemRope.getItemName() + ".name", "Rope");
+        //ModLoader.addName(ResourceManager.blockPiton, "Piton");
+        //ModLoader.addName(ResourceManager.itemRope, "Rope");
         
         ropeRenderID = 0; //ModLoader.getUniqueBlockModelID(this, false);
         
@@ -39,7 +45,7 @@ public class mod_RopeFun extends BaseMod
     @Override
     public void addRenderer(Map renderMap)
     {
-        renderMap.put(EntityRopeJoint.class, new RenderSnowball(Item.snowball.getIconFromDamage(0))); 
+        renderMap.put(EntityRopeJoint.class, new RenderRope()); 
     }
     
     @Override
@@ -68,8 +74,11 @@ public class mod_RopeFun extends BaseMod
     @Override
     public boolean onTickInGame(float partOfTick, Minecraft mc)
     {
-        //System.out.println("onTickInGame, elapsed = " + partOfTick);
-        return true; //return super.onTickInGame(var1, var2);
+        if (++RenderRope.renderFrame % 50 == 0)
+            //System.out.println("onTickInGame, elapsed = " + partOfTick);
+            System.out.print("o");
+        
+        return true;
     }
     
     
