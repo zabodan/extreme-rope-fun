@@ -19,11 +19,12 @@ public class EntityRopeJoint extends Entity
     protected EntityRopeJoint(World world, Vector3 pos)
     {
         super(world);
-        setSize(0.25F, 0.25F);
+        setSize(0.25f, 0.25f);
         setPosition(pos.x, pos.y, pos.z);
         setRotation(0, 0);
         motionX = motionY = motionZ = 0.0;
         preventEntitySpawning = true;
+        renderDistanceWeight = 10; 
 
         ropeJoint_ = new FunRopeJoint(0.01f, pos);
         position_ = pos.copy();
@@ -88,7 +89,7 @@ public class EntityRopeJoint extends Entity
         posZ = position_.z;
 
 
-        if (++ticksExisted == 100)
+        if (++ticksExisted == 1000)
             kill();
     }
     
@@ -126,5 +127,11 @@ public class EntityRopeJoint extends Entity
     {
         return position_;
     }
+    
+//    @Override
+//    public boolean isInRangeToRenderDist(double dist)
+//    {
+//        return dist < 64 * 64;
+//    }
     
 }
