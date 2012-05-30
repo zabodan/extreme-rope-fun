@@ -52,6 +52,7 @@ public class FunRegistry
     public void deregister(IFunEntity en)
     {
         //if (en.getID() == entities_.size() - 1)
+        // TODO IMPLEMENT!!11
     }
 
     public void onGameTick()

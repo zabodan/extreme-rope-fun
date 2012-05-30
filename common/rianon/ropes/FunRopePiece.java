@@ -77,7 +77,7 @@ public class FunRopePiece extends IFunEntity
     @Override
     public void solveForces()
     {
-        tensileForce_.set(end_.position).subtract(begin_.position);
+        tensileForce_.set(end_.position()).subtract(begin_.position());
         tenseLength_ = tensileForce_.mag();
 
         final double delta = tenseLength_ - freeLength_;

@@ -52,6 +52,11 @@ public class ResourceManager
         ModLoader.addShapelessRecipe(new ItemStack(itemRope, 1, 0), new Object[] {
             Block.cloth, Block.cloth });
         
+
+        // entities
+        ModLoader.registerEntityID(EntityRopeJoint.class, "Rope Joint", ModLoader.getUniqueEntityId());
+        
+        
         
         // TODO ...
         

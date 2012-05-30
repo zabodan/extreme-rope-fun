@@ -66,7 +66,7 @@ public class BlockPiton extends Block
             //System.out.println("BlockPiton activated with rope @ " + blockPos + ", meta = " + world.getBlockMetadata(x, y, z));
             
             //Vector3 jointPos = Vector3.fromEntity(player).add(blockPos).multiply(0.5);
-            Entity en = new EntityRopeJoint(world, blockPos.add(0.5, 0.5, 0.5));
+            Entity en = EntityRopeJoint.create(world, blockPos.add(0.5, 0.5, 0.5));
             world.spawnEntityInWorld(en);
             
             return true;

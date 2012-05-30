@@ -15,34 +15,40 @@ public class FunRopeJoint extends IFunEntity
 
     private HashSet<FunRopePiece> ropes_ = new HashSet<>();
     private IFunRopeAttractor attractor_ = null;
+    private IPositionProxy posProxy_;
     private double totalMass_;
 
-    public Vector3 position;
-    public Vector3 velocity = new Vector3();
-    public Vector3 totalForce = new Vector3();
+    private Vector3 position = new Vector3();
+    private Vector3 velocity = new Vector3();
+    private Vector3 totalForce = new Vector3();
 
-    public FunRopeJoint(double jointMass, Vector3 pos)
+    public FunRopeJoint(double jointMass, IPositionProxy proxy)
     {
         totalMass_ = jointMass;
-        position = pos.copy();
+        posProxy_ = proxy;
     }
     
-    public void push(Vector3 delta)
-    {
-        position.add(delta);
-        activateNextTick();
-    }
+//    public void push(Vector3 delta)
+//    {
+//        position.add(delta);
+//        activateNextTick();
+//    }
     
-    public void attractTo(IFunRopeAttractor attr)
-    {
-        attractor_ = attr;
-        activateNextTick();
-    }
+//    public void attractTo(IFunRopeAttractor attr)
+//    {
+//        attractor_ = attr;
+//        activateNextTick();
+//    }
+//    
+//    public void release()
+//    {
+//        attractor_ = null;
+//        activateNextTick();
+//    }
     
-    public void release()
+    public Vector3 position()
     {
-        attractor_ = null;
-        activateNextTick();
+        return position;
     }
 
     public void activateNextTick()
@@ -58,6 +64,12 @@ public class FunRopeJoint extends IFunEntity
         return ropes_;
     }
     
+
+    public void updatePositionAndVelocity()
+    {
+        System.out.println("updatePositionAndVelocity");
+        posProxy_.getPositionAndVelocity(position, velocity);
+    }
     
     // should be used only by FunRopePiece
     protected void attachRopePiece(FunRopePiece rp)
@@ -76,6 +88,9 @@ public class FunRopeJoint extends IFunEntity
     @Override
     public void solveForces()
     {
+        System.out.println("solveForces");
+        updatePositionAndVelocity();
+        
         // start with gravitation
         totalForce.set(0, cGravitation * totalMass_, 0);
 
@@ -99,18 +114,21 @@ public class FunRopeJoint extends IFunEntity
         {
             position.set(attractor_.getPosition());
             velocity.set(0, 0, 0);
-            return;
+        }
+        else
+        {
+            final double timeSpan = 0.05D; // as long as there are 20 ticks per second
+    
+            position.add(temp_.set(velocity).multiply(timeSpan));
+            velocity.add(temp_.set(totalForce).multiply(timeSpan / totalMass_));
+    
+            // limit maximum velocity
+            final double v = velocity.mag();
+            if (v > cMaxVelocity)
+                velocity.multiply(cMaxVelocity / v);
         }
         
-        final double timeSpan = 0.05D; // as long as there are 20 ticks per second
-
-        position.add(temp_.set(velocity).multiply(timeSpan));
-        velocity.add(temp_.set(totalForce).multiply(timeSpan / totalMass_));
-
-        // limit maximum velocity
-        final double v = velocity.mag();
-        if (v > cMaxVelocity)
-            velocity.multiply(cMaxVelocity / v);
+        posProxy_.setPositionAndVelocity(position, velocity);
     }
 
     @Override
