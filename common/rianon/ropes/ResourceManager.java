@@ -2,10 +2,10 @@ package rianon.ropes;
 
 import java.io.File;
 
-import rianon.aa.BlockAdvMachine;
-import rianon.aa.ItemAdvMachine;
-
-import net.minecraft.src.*;
+import net.minecraft.src.Block;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
 import codechicken.core.CoreUtils;

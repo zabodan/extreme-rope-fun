@@ -17,7 +17,7 @@ public class mod_RopeFun extends NetworkMod
     public void load()
     {
         ResourceManager.initialize();
-        ModLoader.setInGameHook(this, true, false);
+        ModLoader.setInGameHook(this, true, false); // on server third parameter does not matter
     }
     
     @Override

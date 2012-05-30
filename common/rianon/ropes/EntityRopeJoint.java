@@ -1,6 +1,7 @@
 package rianon.ropes;
 
 import net.minecraft.src.*;
+import codechicken.core.CoreUtils;
 import codechicken.core.Vector3;
 
 // EntityRopeJoint entity is used as IFunRopeAttractor when managed by dragMan_
@@ -27,7 +28,7 @@ public class EntityRopeJoint extends Entity
         ropeJoint_ = new FunRopeJoint(0.01f, pos);
         position_ = pos.copy();
     
-        System.out.println("EntityRopeJoint born @ " + position_);
+        System.out.println(String.format("EntityRopeJoint [%d] born @ %s", entityId, position_.toString()));
     }
 
     public boolean tryPullingJoint(EntityPlayer player)
@@ -86,11 +87,9 @@ public class EntityRopeJoint extends Entity
         posY = position_.y;
         posZ = position_.z;
 
-        //System.out.print("u");
-        
-        //super.onUpdate();
+
         if (++ticksExisted == 100)
-            setDead();
+            kill();
     }
     
     @Override
@@ -102,6 +101,7 @@ public class EntityRopeJoint extends Entity
         ropeJoint_.deregister();
         ropeJoint_ = null;
         
+        System.out.print(CoreUtils.isClient() ? "[client] " : "[server] ");
         System.out.println("EntityRopeJoint died @ " + position_ + " after life of " + ticksExisted + " ticks");
         super.setDead();
     }

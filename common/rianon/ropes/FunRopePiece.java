@@ -30,16 +30,16 @@ public class FunRopePiece extends IFunEntity
         solveForces();
     }
 
-//    public FunRopeJoint begin()
-//    {
-//        return begin_;
-//    }
-//
-//    public FunRopeJoint end()
-//    {
-//        return end_;
-//    }
-//    
+    public FunRopeJoint begin()
+    {
+        return begin_;
+    }
+
+    public FunRopeJoint end()
+    {
+        return end_;
+    }
+    
     public FunRopeType type()
     {
         return type_;
