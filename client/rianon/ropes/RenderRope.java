@@ -13,8 +13,8 @@ public class RenderRope extends Render
     @Override
     public void doRender(Entity en, double x, double y, double z, float yaw, float partialTickTime)
     {
-        if (renderFrame % 50 == 0)
-            System.out.print("r");
+        //if (renderFrame % 50 == 0)
+            //System.out.print("r");
         
         if (en instanceof EntityRopeJoint)
             renderJoint(((EntityRopeJoint) en).getJoint(), partialTickTime);            

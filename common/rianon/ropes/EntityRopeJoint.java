@@ -21,7 +21,7 @@ public class EntityRopeJoint extends Entity
         setSize(0.25F, 0.25F);
         setPosition(pos.x, pos.y, pos.z);
         setRotation(0, 0);
-        setVelocity(0, 0, 0);
+        motionX = motionY = motionZ = 0.0;
         preventEntitySpawning = true;
 
         ropeJoint_ = new FunRopeJoint(0.01f, pos);
@@ -86,8 +86,10 @@ public class EntityRopeJoint extends Entity
         posY = position_.y;
         posZ = position_.z;
 
+        //System.out.print("u");
+        
         //super.onUpdate();
-        if (++ticksExisted == 200)
+        if (++ticksExisted == 100)
             setDead();
     }
     
