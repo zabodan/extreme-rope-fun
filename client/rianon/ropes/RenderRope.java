@@ -2,9 +2,7 @@ package rianon.ropes;
 
 import java.util.HashSet;
 
-import net.minecraft.src.Entity;
-import net.minecraft.src.Render;
-import net.minecraft.src.Tessellator;
+import net.minecraft.src.*;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -26,7 +24,8 @@ public class RenderRope extends Render
             EntityRopeJoint entity = (EntityRopeJoint) en;
             shift.set(x, y, z).subtract(entity.getJoint().position());
 
-            // do render
+            renderOffsetAABB(en.boundingBox, shift.x, shift.y, shift.z);
+            
             renderJoint(entity.getJoint(), partialTickTime);
         }
     }
@@ -38,32 +37,35 @@ public class RenderRope extends Render
             // TODO render joint @ joint.pos + shift
             p1.set(joint.position()).add(shift);
 
-            GL11.glPushMatrix();
-            GL11.glTranslatef((float) p1.x, (float) p1.y, (float) p1.z);
-            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-
-            byte textureIndex = 46;
-            loadTexture("/gui/items.png");
-
-            Tessellator tess = Tessellator.instance;
-            double u1 = (textureIndex % 16 * 16 + 0) / 256.0;
-            double u2 = (textureIndex % 16 * 16 + 16) / 256.0;
-            double v1 = (textureIndex / 16 * 16 + 0) / 256.0;
-            double v2 = (textureIndex / 16 * 16 + 16) / 256.0;
-
-            GL11.glRotatef(180.0F - renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-            GL11.glRotatef(-renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
-            tess.startDrawingQuads();
-            tess.setNormal(0.0F, 1.0F, 0.0F);
-            tess.addVertexWithUV(-0.5, -0.5, 0, u1, v2);
-            tess.addVertexWithUV( 0.5, -0.5, 0, u2, v2);
-            tess.addVertexWithUV( 0.5,  0.5, 0, u2, v1);
-            tess.addVertexWithUV(-0.5,  0.5, 0, u1, v1);
-            tess.draw();
-
-            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-            GL11.glPopMatrix();
-
+//            GL11.glPushMatrix();
+//            GL11.glTranslatef((float) p1.x, (float) p1.y, (float) p1.z);
+//            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+//
+//            byte textureIndex = 46;
+//            loadTexture("/gui/items.png");
+//
+//            Tessellator tess = Tessellator.instance;
+//            double u1 = (textureIndex % 16 * 16 + 0) / 256.0;
+//            double u2 = (textureIndex % 16 * 16 + 16) / 256.0;
+//            double v1 = (textureIndex / 16 * 16 + 0) / 256.0;
+//            double v2 = (textureIndex / 16 * 16 + 16) / 256.0;
+//
+//            GL11.glRotatef(180.0F - renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+//            GL11.glRotatef(-renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+//            tess.startDrawingQuads();
+//            tess.setNormal(0.0F, 1.0F, 0.0F);
+//            tess.addVertexWithUV(-0.5, -0.5, 0, u1, v2);
+//            tess.addVertexWithUV( 0.5, -0.5, 0, u2, v2);
+//            tess.addVertexWithUV( 0.5,  0.5, 0, u2, v1);
+//            tess.addVertexWithUV(-0.5,  0.5, 0, u1, v1);
+//            tess.draw();
+//
+//            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+//            GL11.glPopMatrix();
+            
+            //final double w = EntityRopeJoint.cWidth, h = EntityRopeJoint.cHeight;
+            //AxisAlignedBB bbox = AxisAlignedBB.getBoundingBoxFromPool(-w/2, 0, -w/2, w/2, h, w/2); 
+            //renderOffsetAABB(bbox, p1.x, p1.y, p1.z);
         }
 
         HashSet<FunRopePiece> ropes = joint.getConnectedRopes();

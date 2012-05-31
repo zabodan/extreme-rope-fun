@@ -7,8 +7,8 @@ import codechicken.core.Vector3;
 public class FunRopeJoint extends IFunEntity
 {
     private static final double cGravitation = -9.81;
-    private static final double cAirFriction = -0.02;
-    private static final double cMaxVelocity = 8; // m/s
+    private static final double cAirFriction = -0.002;
+    private static final double cMaxVelocity = 16; // m/s
 
     // temporary Vector3 to help computations without allocating memory
     private static Vector3 temp_ = new Vector3();
@@ -17,6 +17,7 @@ public class FunRopeJoint extends IFunEntity
     //private IFunRopeAttractor attractor_ = null;
     private IFunPositionProxy posProxy_;
     private double totalMass_;
+    private boolean remainsActive_ = true;
 
     private Vector3 position = new Vector3();
     private Vector3 velocity = new Vector3();
@@ -54,6 +55,7 @@ public class FunRopeJoint extends IFunEntity
     public void updatePositionAndVelocity()
     {
         posProxy_.getPositionAndVelocity(position, velocity);
+        remainsActive_ = velocity.mag() > 0.1;
     }
     
     // should be used only by FunRopePiece
@@ -73,7 +75,6 @@ public class FunRopeJoint extends IFunEntity
     @Override
     public void solveForces()
     {
-        System.out.println("solveForces");
         updatePositionAndVelocity();
         
         // start with gravitation
@@ -119,7 +120,7 @@ public class FunRopeJoint extends IFunEntity
     @Override
     public boolean doesRemainActive()
     {
-        return !velocity.isZero();
+        return remainsActive_;
     }
     
 }

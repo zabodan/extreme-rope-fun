@@ -1,20 +1,23 @@
 package rianon.ropes;
 
-import net.minecraft.src.Entity;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.World;
+import java.util.List;
+
+import net.minecraft.src.*;
 import codechicken.core.CoreUtils;
 import codechicken.core.Vector3;
 
 public class EntityRopeJoint extends Entity
     implements IFunPositionProxy
 {
+    public static final float cWidth = .25f;
+    public static final float cHeight = .25f;
+    
     private FunRopeJoint funJoint_;
 
     public EntityRopeJoint(World world)
     {
         super(world);
-        setSize(0.25f, 0.25f);
+        setSize(cWidth, cHeight);
 
         motionX = motionY = motionZ = 0.0;
         preventEntitySpawning = true;
@@ -62,14 +65,20 @@ public class EntityRopeJoint extends Entity
         // will run for whole server once per tick from first joint entity
         FunRegistry.instance().onGameTick();
         
+        if (!onGround)
+            funJoint_.activateNextTick();
+        
 //        if (motionX * motionX + motionY * motionY + motionZ * motionZ > 0.1)
 //            funJoint_.activateNextTick();
         
-        if (ticksExisted % 10 == 0)
-            System.out.println(String.format("Entity [%d] exists for %d ticks.", entityId, ticksExisted));
+        
+//        if ((entityId + ticksExisted) % 10 == 0)
+//            System.out.println(String.format("Entity [%d] exists for %d ticks.", entityId, ticksExisted));
         
         
-        if (ticksExisted >= 500 || posY < 60)
+        //System.out.println(String.format("Entity [%d] moves with %f, %f, %f speed.", entityId, motionX, motionY, motionZ));
+        
+        if (ticksExisted >= 100 || posY < 60)
             kill();
     }
     
@@ -86,8 +95,15 @@ public class EntityRopeJoint extends Entity
         funJoint_ = null;
         
         super.setDead();
+        
+//        List locals = worldObj.getEntitiesWithinAABBExcludingEntity(this, boundingBox.expand(1, 1, 1));
+//        for (Object o : locals)
+//        {
+//            if (o instanceof EntityRopeJoint)
+//                ((EntityRopeJoint)o).getJoint().activateNextTick();
+//        }
     }
-    
+
     @Override
     public void getPositionAndVelocity(Vector3 pos, Vector3 vel)
     {
@@ -98,9 +114,42 @@ public class EntityRopeJoint extends Entity
     @Override
     public void setPositionAndVelocity(Vector3 pos, Vector3 vel)
     {
-        // bypass ropeJoint_.updatePositionAndVelocity();
-        super.setPosition(pos.x, pos.y, pos.z);
-        motionX = vel.x; motionY = vel.y; motionZ = vel.z;
+        System.out.println(String.format("before = %f, %f, %f", motionX, motionY, motionZ));
+        
+        moveEntity(pos.x - posX, pos.y - posY, pos.z - posZ);
+        
+        System.out.println(String.format("middle = %f, %f, %f", motionX, motionY, motionZ));
+        
+        motionX = vel.x;
+        motionY = onGround ? -0.0001 : vel.y;
+        motionZ = vel.z;
+
+        System.out.println(String.format("returned = %f, %f, %f", vel.x, vel.y, vel.z));
+        System.out.println(String.format("after = %f, %f, %f\n", motionX, motionY, motionZ));
+    }
+    
+    @Override
+    public boolean canBeCollidedWith()
+    {
+        return true;
+    }
+    
+    @Override
+    public boolean canBePushed()
+    {
+        return true;
+    }
+    
+    @Override
+    public AxisAlignedBB getBoundingBox()
+    {
+        return boundingBox;
+    }
+    
+    @Override
+    public AxisAlignedBB getCollisionBox(Entity en)
+    {
+        return en.boundingBox; 
     }
     
 }

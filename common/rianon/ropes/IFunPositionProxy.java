@@ -19,4 +19,9 @@ public interface IFunPositionProxy
      */
     public void setPositionAndVelocity(Vector3 pos, Vector3 vel);
     
+//    
+//    public Vector3 getVelocity(Vector3 rv);
+//    public Vector3 getPosition(Vector3 rv);
+//    public void addVelocity(Vector3 rv);
+    
 }
