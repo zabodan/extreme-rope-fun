@@ -14,41 +14,29 @@ public class FunRopeJoint extends IFunEntity
     private static Vector3 temp_ = new Vector3();
 
     private HashSet<FunRopePiece> ropes_ = new HashSet<>();
-    private IFunRopeAttractor attractor_ = null;
-    private IPositionProxy posProxy_;
+    //private IFunRopeAttractor attractor_ = null;
+    private IFunPositionProxy posProxy_;
     private double totalMass_;
 
     private Vector3 position = new Vector3();
     private Vector3 velocity = new Vector3();
     private Vector3 totalForce = new Vector3();
 
-    public FunRopeJoint(double jointMass, IPositionProxy proxy)
+    public FunRopeJoint(double jointMass, IFunPositionProxy proxy)
     {
         totalMass_ = jointMass;
         posProxy_ = proxy;
+        updatePositionAndVelocity();
     }
-    
-//    public void push(Vector3 delta)
-//    {
-//        position.add(delta);
-//        activateNextTick();
-//    }
-    
-//    public void attractTo(IFunRopeAttractor attr)
-//    {
-//        attractor_ = attr;
-//        activateNextTick();
-//    }
-//    
-//    public void release()
-//    {
-//        attractor_ = null;
-//        activateNextTick();
-//    }
     
     public Vector3 position()
     {
         return position;
+    }
+    
+    public Vector3 force()
+    {
+        return totalForce;
     }
 
     public void activateNextTick()
@@ -58,16 +46,13 @@ public class FunRopeJoint extends IFunEntity
             FunRegistry.instance().activateNextTick(rp);
     }
     
-    
     public HashSet<FunRopePiece> getConnectedRopes()
     {
         return ropes_;
     }
     
-
     public void updatePositionAndVelocity()
     {
-        System.out.println("updatePositionAndVelocity");
         posProxy_.getPositionAndVelocity(position, velocity);
     }
     
@@ -103,19 +88,19 @@ public class FunRopeJoint extends IFunEntity
 
         // TODO compute ground friction, absorption and repulsion, then add
         
-        if (attractor_ != null)
-            totalForce.add(attractor_.getPullingForceAt(position));
+//        if (attractor_ != null)
+//            totalForce.add(attractor_.getPullingForceAt(position));
     }
 
     @Override
     public void solveMotion()
     {
-        if (attractor_ != null && attractor_.inFirmGrip(position))
-        {
-            position.set(attractor_.getPosition());
-            velocity.set(0, 0, 0);
-        }
-        else
+//        if (attractor_ != null && attractor_.inFirmGrip(position))
+//        {
+//            position.set(attractor_.getPosition());
+//            velocity.set(0, 0, 0);
+//        }
+//        else
         {
             final double timeSpan = 0.05D; // as long as there are 20 ticks per second
     

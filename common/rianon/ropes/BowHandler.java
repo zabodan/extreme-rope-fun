@@ -12,7 +12,7 @@ public class BowHandler
     @Override
     public ItemStack onArrowNock(ItemStack itemstack, World world, EntityPlayer player)
     {
-        System.out.println("onArrowNock");
+        //System.out.println("onArrowNock");
         return null;
     }
 

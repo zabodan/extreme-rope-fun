@@ -2,20 +2,9 @@ package rianon.ropes;
 
 import codechicken.core.Vector3;
 
-public interface IPositionProxy
+public interface IFunPositionProxy
 {
-    /**
-     * Return object position as Vector3
-     * @param rv - optional storage
-     */
-    public Vector3 getPosition(Vector3 rv);
-    
-    /**
-     * Return object velocity as Vector3
-     * @param rv - optional storage
-     */
-    public Vector3 getVelocity(Vector3 rv);
-    
+
     /**
      * Read object position and velocity into provided vectors
      * @param pos - storage for position, not NULL

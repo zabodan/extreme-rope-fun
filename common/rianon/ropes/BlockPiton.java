@@ -10,13 +10,16 @@ import codechicken.core.Vector3;
 public class BlockPiton extends Block
 {
     
+    private static final double n = 0.38;
+    private static final double x = 1 - n;
+    
     private static final AxisAlignedBB bboxes[] = {
-        AxisAlignedBB.getBoundingBox(0.38, 0.4, 0.38, 0.62, 1.0, 0.62),
-        AxisAlignedBB.getBoundingBox(0.38, 0.0, 0.38, 0.62, 0.6, 0.62),
-        AxisAlignedBB.getBoundingBox(0.38, 0.38, 0.4, 0.62, 0.62, 1.0),
-        AxisAlignedBB.getBoundingBox(0.38, 0.38, 0.0, 0.62, 0.62, 0.6),
-        AxisAlignedBB.getBoundingBox(0.4, 0.38, 0.38, 1.0, 0.62, 0.62),
-        AxisAlignedBB.getBoundingBox(0.0, 0.38, 0.38, 0.6, 0.62, 0.62)
+        AxisAlignedBB.getBoundingBox(n, 0.4, n, x, 1.0, x),
+        AxisAlignedBB.getBoundingBox(n, 0.0, n, x, 0.6, x),
+        AxisAlignedBB.getBoundingBox(n, n, 0.4, x, x, 1.0),
+        AxisAlignedBB.getBoundingBox(n, n, 0.0, x, x, 0.6),
+        AxisAlignedBB.getBoundingBox(0.4, n, n, 1.0, x, x),
+        AxisAlignedBB.getBoundingBox(0.0, n, n, 0.6, x, x)
     };
 
     protected BlockPiton(int id)

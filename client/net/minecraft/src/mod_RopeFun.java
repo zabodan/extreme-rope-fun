@@ -9,6 +9,7 @@ import rianon.ropes.FunRegistry;
 import rianon.ropes.RenderRope;
 import rianon.ropes.ResourceManager;
 import codechicken.core.CoreUtils;
+import codechicken.core.ReflectionManager;
 
 public class mod_RopeFun extends NetworkMod
 {
@@ -23,7 +24,7 @@ public class mod_RopeFun extends NetworkMod
     @Override
     public void load()
     {
-        ResourceManager.initialize();
+        ResourceManager.initialize(this);
         
         CoreUtils.addLocalization(ResourceManager.blockPiton.getBlockName() + ".name", "Piton");
         CoreUtils.addLocalization(ResourceManager.itemRope.getItemName() + ".name", "Rope");
@@ -68,12 +69,7 @@ public class mod_RopeFun extends NetworkMod
     @Override
     public boolean onTickInGame(float partOfTick, Minecraft mc)
     {
-        if (!CoreUtils.isClient())
-            // update physics only in SSP mode
-            FunRegistry.instance().onGameTick();
-
         ++RenderRope.renderFrame;
-        
         return true;
     }
     
@@ -81,5 +77,24 @@ public class mod_RopeFun extends NetworkMod
     public boolean serverSideRequired()
     {
         return false;
+    }
+    
+    public static int getCurrentTick()
+    {
+        int tr = 0;
+        try
+        {
+            // field[26] is "ticksRan"
+            tr = ReflectionManager.getField(Minecraft.class, Integer.class, CoreUtils.mc, 26).intValue();
+        }
+        catch (IllegalArgumentException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+        return tr;
     }
 }

@@ -24,7 +24,7 @@ public class RenderRope extends Render
         if (en instanceof EntityRopeJoint)
         {
             EntityRopeJoint entity = (EntityRopeJoint) en;
-            shift.set(x, y, z).subtract(entity.getPosition(new Vector3()));
+            shift.set(x, y, z).subtract(entity.getJoint().position());
 
             // do render
             renderJoint(entity.getJoint(), partialTickTime);

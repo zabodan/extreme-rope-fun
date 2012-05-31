@@ -8,20 +8,21 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
+import net.minecraft.src.forge.NetworkMod;
 import codechicken.core.CoreUtils;
 
 public class ResourceManager
 {
-    public static String modVersion = "pre-alpha-0.01";
-    
     private static boolean initialized = false;
     private static final Configuration config = new Configuration(new File(CoreUtils.getMinecraftDir(), "/config/RopeFun.cfg"));
     private static final BowHandler bowHandler = new BowHandler();
     
+    public static String modVersion = "pre-alpha-0.01";
+    
     public static Block blockPiton;
     public static Item itemRope;
     
-    public static void initialize()
+    public static void initialize(NetworkMod mod)
     {
         if (initialized)
             return;
@@ -54,8 +55,9 @@ public class ResourceManager
         
 
         // entities
-        ModLoader.registerEntityID(EntityRopeJoint.class, "Rope Joint", ModLoader.getUniqueEntityId());
-        
+        int ropeJointEntityID = ModLoader.getUniqueEntityId();
+        ModLoader.registerEntityID(EntityRopeJoint.class, "Rope Joint", ropeJointEntityID);
+        //MinecraftForge.registerEntity(EntityRopeJoint.class, mod, ropeJointEntityID, 128, 0, initialized)
         
         
         // TODO ...

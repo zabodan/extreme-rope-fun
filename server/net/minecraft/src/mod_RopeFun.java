@@ -1,12 +1,14 @@
 package net.minecraft.src;
 
-import rianon.ropes.FunRegistry;
-import rianon.ropes.ResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.forge.NetworkMod;
+import rianon.ropes.FunRegistry;
+import rianon.ropes.ResourceManager;
 
 public class mod_RopeFun extends NetworkMod
 {
+    private static int ticksRan = 0;
+    
     @Override
     public String getVersion()
     {
@@ -16,14 +18,14 @@ public class mod_RopeFun extends NetworkMod
     @Override
     public void load()
     {
-        ResourceManager.initialize();
+        ResourceManager.initialize(this);
         ModLoader.setInGameHook(this, true, false); // on server third parameter does not matter
     }
     
     @Override
     public boolean onTickInGame(MinecraftServer minecraftServer)
     {
-        FunRegistry.instance().onGameTick();
+        ++ticksRan;
         return true;
     }
 
@@ -37,5 +39,10 @@ public class mod_RopeFun extends NetworkMod
     public boolean clientSideRequired()
     {
         return true;
+    }
+    
+    public static int getCurrentTick()
+    {
+        return ticksRan;
     }
 }
